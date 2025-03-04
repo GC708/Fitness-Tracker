@@ -18,7 +18,7 @@ class MainView extends JFrame {
 
     public MainView() {
         setTitle("Fitness Tracker");
-        setSize(400, 300);
+        setSize(1600, 900);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         setLocationRelativeTo(null);
