@@ -1,7 +1,4 @@
-package Views;
-
-import javax.swing.*;
-import java.awt.*;
+import Views.ViewMain;
 
 public class Main {
     public static void main(String[] args) {
