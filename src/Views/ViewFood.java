@@ -3,8 +3,8 @@ package Views;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.awt.event.*;
+import java.io.*;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -25,7 +25,6 @@ public class ViewFood extends JFrame {
         model.addColumn("Protein Intake (g)");
         model.addColumn("Calories (kcal)");
 
-
         foodTable = new JTable(model);
         JScrollPane scrollPane = new JScrollPane(foodTable);
         JPanel buttonPanel = new JPanel();
@@ -33,22 +32,18 @@ public class ViewFood extends JFrame {
         JButton deleteButton = new JButton("Delete");
         buttonPanel.add(addButton);
         buttonPanel.add(deleteButton);
+
         add(scrollPane, BorderLayout.CENTER);
         add(buttonPanel, BorderLayout.SOUTH);
 
-        addButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                openAddFoodDialog();
-            }
-        });
+        addButton.addActionListener(e -> openAddFoodDialog());
+        deleteButton.addActionListener(e -> deleteSelectedFood());
 
-        deleteButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                deleteSelectedFood();
-            }
-        });
+        // Populate table with existing data from FitnessData
+        for (FoodEntry entry : FitnessData.foodLog) {
+            model.addRow(new Object[]{entry.getFoodItem(), entry.getDate(), entry.getTime(),
+                    entry.getProtein(), entry.getCalories()});
+        }
 
         setVisible(true);
     }
@@ -57,6 +52,8 @@ public class ViewFood extends JFrame {
         JTextField foodInput = new JTextField(20);
         JTextField proteinInput = new JTextField(5);
         JTextField caloriesInput = new JTextField(5);
+
+        String currentTime = new SimpleDateFormat("HH:mm:ss").format(new Date());
 
         JPanel panel = new JPanel();
         panel.add(new JLabel("Enter Food Item:"));
@@ -76,7 +73,8 @@ public class ViewFood extends JFrame {
                 try {
                     double proteinValue = Double.parseDouble(protein);
                     double calorieValue = Double.parseDouble(calories);
-                    addFoodItem(foodItem, proteinValue, calorieValue);
+                    addFoodItem(foodItem, proteinValue, calorieValue, currentTime);
+                    saveFoodData();
                 } catch (NumberFormatException ex) {
                     JOptionPane.showMessageDialog(this, "Please enter valid numbers for protein and calories.");
                 }
@@ -86,28 +84,40 @@ public class ViewFood extends JFrame {
         }
     }
 
-    private void addFoodItem(String foodItem, double protein, double calories) {
+    private void addFoodItem(String foodItem, double protein, double calories, String time) {
         String currentDate = new SimpleDateFormat("MMMM d, yyyy").format(new Date());
-        String currentTime = new SimpleDateFormat("HH:mm:ss").format(new Date());
-        model.addRow(new Object[]{foodItem, currentDate, currentTime, protein, calories});
+        model.addRow(new Object[]{foodItem, currentDate, time, protein, calories});
+        FitnessData.foodLog.add(new FoodEntry(foodItem, currentDate, time, protein, calories));
     }
+
     private void deleteSelectedFood() {
         int selectedRow = foodTable.getSelectedRow();
         if (selectedRow != -1) {
             model.removeRow(selectedRow);
+            FitnessData.foodLog.remove(selectedRow);
+            saveFoodData();
         } else {
             JOptionPane.showMessageDialog(this, "Please select a food item to delete.");
         }
     }
 
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                new ViewFood();
+    public void saveFoodData() {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter("food_log.txt"))) {
+            System.out.println("Saving food data...");
+            for (FoodEntry entry : FitnessData.foodLog) {
+                String cleanedDate = entry.getDate().replace(",", "");
+                writer.write(entry.getFoodItem() + ", " + cleanedDate + ", " + entry.getTime() + ", "
+                        + entry.getProtein() + ", " + entry.getCalories());
+                writer.newLine();
             }
-        });
+            System.out.println("Food data saved successfully.");
+        } catch (IOException e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(null, "Error saving food data.");
+        }
+    }
+
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(ViewFood::new);
     }
 }
-
-

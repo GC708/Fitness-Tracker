@@ -12,6 +12,9 @@ public class ViewMain extends JFrame {
         setLocationRelativeTo(null);
         setLayout(new GridLayout(2, 1));
 
+        // Load all data at startup
+        FitnessData.loadAllData();
+
         JPanel recordPanel = new JPanel();
         recordPanel.setBorder(BorderFactory.createTitledBorder("Record"));
         JButton workoutButton = new JButton("Workout");
