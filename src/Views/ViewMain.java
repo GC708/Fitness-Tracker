@@ -7,7 +7,7 @@ public class ViewMain extends JFrame {
 
     public ViewMain() {
         setTitle("Fitness Tracker");
-        setSize(1600, 900);
+        setSize(500, 400);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
         setLayout(new GridLayout(2, 1));

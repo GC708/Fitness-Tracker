@@ -14,9 +14,12 @@ public class ViewStatistics extends JFrame {
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setLocationRelativeTo(null);
 
-        // Use centralized data from FitnessData
         BarGraphPanel graphPanel = new BarGraphPanel(FitnessData.foodLog, FitnessData.workoutLog);
         add(graphPanel);
+
+        JButton closeButton = new JButton("Close");
+        closeButton.addActionListener(e -> dispose());
+        add(closeButton, BorderLayout.SOUTH);
 
         setVisible(true);
     }
@@ -25,7 +28,6 @@ public class ViewStatistics extends JFrame {
         SwingUtilities.invokeLater(() -> new ViewStatistics());
     }
 
-    // Custom JPanel for drawing the bar graph
     class BarGraphPanel extends JPanel {
         private final ArrayList<FoodEntry> foodLog;
         private final ArrayList<WorkoutEntry> workoutLog;
@@ -40,61 +42,74 @@ public class ViewStatistics extends JFrame {
             super.paintComponent(g);
             Graphics2D g2d = (Graphics2D) g;
 
-            // Data points: Mapping dates to calories consumed and burned
             Map<String, Double> caloriesConsumedByDate = new HashMap<>();
             Map<String, Double> caloriesBurnedByDate = new HashMap<>();
 
-            // Calculate total calories consumed by date
+            // Aggregate calories consumed by date
             for (FoodEntry entry : foodLog) {
-                caloriesConsumedByDate.put(entry.getDate(),
-                        caloriesConsumedByDate.getOrDefault(entry.getDate(), 0.0) + entry.getCalories());
+                String date = entry.getDate();
+                caloriesConsumedByDate.put(date,
+                        caloriesConsumedByDate.getOrDefault(date, 0.0) + entry.getCalories());
             }
 
-            // Calculate total calories burned by date
+            // Aggregate calories burned by date
             for (WorkoutEntry entry : workoutLog) {
-                caloriesBurnedByDate.put(entry.getDate(),
-                        caloriesBurnedByDate.getOrDefault(entry.getDate(), 0.0) + entry.getCaloriesBurned());
+                String date = entry.getDate();
+                caloriesBurnedByDate.put(date,
+                        caloriesBurnedByDate.getOrDefault(date, 0.0) + entry.getCaloriesBurned());
             }
 
-            // Calculate max calories for dynamic scaling
             double maxConsumed = caloriesConsumedByDate.values().stream().mapToDouble(Double::doubleValue).max().orElse(0);
             double maxBurned = caloriesBurnedByDate.values().stream().mapToDouble(Double::doubleValue).max().orElse(0);
             double maxCalories = Math.max(maxConsumed, maxBurned);
-            double scale = maxCalories > 0 ? 200.0 / maxCalories : 1; // Scale to 200px height
+            double scale = maxCalories > 0 ? 200.0 / maxCalories : 1;
 
-            // Draw axes
             g2d.setColor(Color.BLACK);
             g2d.drawLine(50, 250, 450, 250); // X-axis
             g2d.drawLine(50, 250, 50, 50);   // Y-axis
 
-            // Draw bars for each date
+            // Draw horizontal grid lines and Y-axis labels (numbers)
+            for (int i = 50; i <= 250; i += 30) {
+                g2d.setColor(Color.LIGHT_GRAY);
+                g2d.drawLine(50, i, 450, i);   // Grid lines
+                g2d.setColor(Color.BLACK);
+                if (i != 250) {
+                    g2d.drawString(String.valueOf(250 - i), 20, i + 5);  // Y-axis labels (numbers)
+                }
+            }
+
+            g2d.setColor(Color.BLACK);
+            g2d.setFont(new Font("Arial", Font.BOLD, 16));
+            g2d.drawString("Calories Consumed vs. Calories Burned", 120, 30);
+
             int xPos = 60;
             int barWidth = 20;
+
+            // Iterate through the dates and draw bars
             for (String date : caloriesConsumedByDate.keySet()) {
                 int yConsumed = (int) (250 - caloriesConsumedByDate.get(date) * scale);
                 int yBurned = (int) (250 - caloriesBurnedByDate.getOrDefault(date, 0.0) * scale);
 
-                // Draw consumed calories bar in RED
                 g2d.setColor(Color.RED);
                 g2d.fillRect(xPos, yConsumed, barWidth, 250 - yConsumed);
 
-                // Draw burned calories bar in BLUE
                 g2d.setColor(Color.BLUE);
                 g2d.fillRect(xPos + barWidth + 5, yBurned, barWidth, 250 - yBurned);
 
-                // Date labels (shortened to avoid overlap)
                 g2d.setColor(Color.BLACK);
-                String shortDate = date.substring(0, Math.min(6, date.length())); // e.g., "Mar 9"
+                String shortDate = date.length() > 10 ? date.substring(0, 10) : date;  // Limit to 10 characters
                 g2d.drawString(shortDate, xPos, 270);
 
-                xPos += 60; // Adjusted spacing
+                xPos += 60;  // Space between bars
             }
 
-            // Legend
             g2d.setColor(Color.RED);
-            g2d.drawString("Calories Consumed", 300, 60);
+            g2d.drawString("Calories Consumed", 300, 320);
             g2d.setColor(Color.BLUE);
-            g2d.drawString("Calories Burned", 300, 80);
+            g2d.drawString("Calories Burned", 300, 300);
         }
     }
 }
+
+
+

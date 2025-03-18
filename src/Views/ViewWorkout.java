@@ -14,7 +14,7 @@ public class ViewWorkout extends JFrame {
 
     public ViewWorkout() {
         setTitle("Workout Tracker");
-        setSize(700, 400);
+        setSize(700, 500);  // Increased height to accommodate new section
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setLocationRelativeTo(null);
 
@@ -35,16 +35,84 @@ public class ViewWorkout extends JFrame {
         add(scrollPane, BorderLayout.CENTER);
         add(buttonPanel, BorderLayout.SOUTH);
 
+        //  beginner section for muscle groups
+        JPanel muscleGroupPanel = new JPanel();
+        String[] muscleGroups = {"Select Muscle Group", "Chest", "Back", "Shoulders", "Arms", "Legs", "Glutes", "Abs"};
+        JComboBox<String> muscleGroupComboBox = new JComboBox<>(muscleGroups);
+        muscleGroupPanel.add(muscleGroupComboBox);
+
+        //  default workouts
+        JTextArea defaultWorkoutArea = new JTextArea(5, 30);
+        defaultWorkoutArea.setEditable(false);
+        muscleGroupPanel.add(defaultWorkoutArea);
+
+        muscleGroupComboBox.addActionListener(e -> {
+            String selectedGroup = (String) muscleGroupComboBox.getSelectedItem();
+            String workoutPlan = getBeginnerWorkout(selectedGroup);
+            defaultWorkoutArea.setText(workoutPlan);
+        });
+
+        add(muscleGroupPanel, BorderLayout.NORTH);
+
         addButton.addActionListener(e -> openAddWorkoutDialog());
         deleteButton.addActionListener(e -> deleteSelectedWorkout());
 
-        // Populate table with existing data from FitnessData
+        //  current workout to table
         for (WorkoutEntry entry : FitnessData.workoutLog) {
             model.addRow(new Object[]{entry.getWorkoutType(), entry.getSets() + "x" + entry.getReps(),
                     entry.getWeight(), entry.getDate()});
         }
 
         setVisible(true);
+    }
+
+    private String getBeginnerWorkout(String muscleGroup) {
+        switch (muscleGroup) {
+            case "Chest":
+                return "1. Chest Press: 4 x 10\n" +
+                        "2. Push-ups: 3 x 12\n" +
+                        "3. Dumbbell Fly: 3 x 10\n" +
+                        "4. Incline Chest Press: 4 x 10\n" +
+                        "5. Cable Chest Fly: 3 x 12";
+            case "Back":
+                return "1. Lat Pulldown: 4 x 10\n" +
+                        "2. Seated Row: 3 x 10\n" +
+                        "3. Deadlift: 3 x 8\n" +
+                        "4. Bent-over Row: 4 x 10\n" +
+                        "5. T-Bar Row: 3 x 12";
+            case "Shoulders":
+                return "1. Shoulder Press: 4 x 10\n" +
+                        "2. Lateral Raise: 3 x 12\n" +
+                        "3. Front Raise: 3 x 10\n" +
+                        "4. Arnold Press: 3 x 10\n" +
+                        "5. Rear Delt Fly: 3 x 12";
+            case "Arms":
+                return "1. Bicep Curl: 4 x 12\n" +
+                        "2. Tricep Dips: 3 x 10\n" +
+                        "3. Hammer Curl: 3 x 12\n" +
+                        "4. Tricep Pushdown: 4 x 10\n" +
+                        "5. Concentration Curl: 3 x 10";
+            case "Legs":
+                return "1. Squats: 4 x 10\n" +
+                        "2. Lunges: 3 x 12\n" +
+                        "3. Leg Press: 3 x 10\n" +
+                        "4. Leg Curl: 3 x 12\n" +
+                        "5. Bulgarian Split Squat: 3 x 10";
+            case "Glutes":
+                return "1. Hip Thrust: 4 x 10\n" +
+                        "2. Glute Bridges: 3 x 12\n" +
+                        "3. Bulgarian Split Squat: 3 x 10\n" +
+                        "4. Cable Kickbacks: 3 x 12\n" +
+                        "5. Deadlift: 3 x 8";
+            case "Abs":
+                return "1. Plank: 3 x 30 seconds\n" +
+                        "2. Leg Raises: 3 x 12\n" +
+                        "3. Russian Twists: 3 x 15\n" +
+                        "4. Bicycle Crunches: 3 x 15\n" +
+                        "5. Mountain Climbers: 3 x 30 seconds";
+            default:
+                return "Please select a muscle group to view a beginner workout.";
+        }
     }
 
     private void openAddWorkoutDialog() {
@@ -120,4 +188,5 @@ public class ViewWorkout extends JFrame {
     public static void main(String[] args) {
         SwingUtilities.invokeLater(ViewWorkout::new);
     }
+
 }
