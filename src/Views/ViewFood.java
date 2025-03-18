@@ -13,8 +13,8 @@ public class ViewFood extends JFrame {
     private JTable foodTable;
 
     public ViewFood() {
-        setTitle("Food Tracker");
-        setSize(600, 400);
+        setTitle("Fitness Tracker - Food");
+        setSize(800,600);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setLocationRelativeTo(null);
 

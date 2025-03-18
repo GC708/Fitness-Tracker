@@ -1,6 +1,5 @@
 package Views;
 
-// FoodEntry Model
 class FoodEntry {
     String foodItem;
     String date;
@@ -22,3 +21,4 @@ class FoodEntry {
     public double getProtein() { return protein; }
     public double getCalories() { return calories; }
 }
+

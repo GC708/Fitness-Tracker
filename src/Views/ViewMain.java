@@ -6,10 +6,11 @@ import java.awt.*;
 public class ViewMain extends JFrame {
 
     public ViewMain() {
-        setTitle("Fitness Tracker");
-        setSize(1600, 900);
+        setTitle("Fitness Tracker - Homepage");
+        setSize(800,600);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
+        setFocusable(false);
         setLayout(new GridLayout(2, 1));
 
         // Load all data at startup
