@@ -1,22 +1,27 @@
 package Views;
 
 import Models.FitnessData;
+import Models.FoodEntry;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.*;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-public class ViewFood extends JFrame {
+public class ViewFood extends JFrame implements ActionListener {
     private DefaultTableModel model;
     private JTable foodTable;
+    JButton returnButton = new JButton("Return");
 
     public ViewFood() {
         setTitle("Fitness Tracker - Food");
+        setExtendedState(ViewMain.MAXIMIZED_BOTH);
         setSize(800,600);
-        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
 
         model = new DefaultTableModel();
@@ -31,22 +36,41 @@ public class ViewFood extends JFrame {
         JPanel buttonPanel = new JPanel();
         JButton addButton = new JButton("Add");
         JButton deleteButton = new JButton("Delete");
+
         buttonPanel.add(addButton);
         buttonPanel.add(deleteButton);
+        buttonPanel.add(returnButton);
+
+        addButton.setFocusable(false);
+        deleteButton.setFocusable(false);
+        returnButton.setFocusable(false);
 
         add(scrollPane, BorderLayout.CENTER);
         add(buttonPanel, BorderLayout.SOUTH);
 
         addButton.addActionListener(e -> openAddFoodDialog());
         deleteButton.addActionListener(e -> deleteSelectedFood());
+        returnButton.addActionListener(this);
 
         // Populate table with existing data from FitnessData
         for (FoodEntry entry : FitnessData.foodLog) {
             model.addRow(new Object[]{entry.getFoodItem(), entry.getDate(), entry.getTime(),
                     entry.getProtein(), entry.getCalories()});
         }
-
         setVisible(true);
+    }
+
+    /**
+     * Returns the user to homepage
+     * Disposes of the current window before opening a new one.
+     * @param e the event to be processed, used to determine which button was clicked.
+     */
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        if (e.getSource() == returnButton) {
+            dispose();
+            ViewMain viewMain = new ViewMain();
+        }
     }
 
     private void openAddFoodDialog() {

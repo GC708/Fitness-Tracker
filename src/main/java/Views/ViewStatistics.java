@@ -1,29 +1,50 @@
 package Views;
 
 import Models.FitnessData;
+import Models.FoodEntry;
+import Models.WorkoutEntry;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-public class ViewStatistics extends JFrame {
+public class ViewStatistics extends JFrame implements ActionListener {
+    JButton returnButton = new JButton("Return");
 
     public ViewStatistics() {
-        setTitle("Fitness Tracker - Statistics");
+        setTitle("Fitness Tracker - Statistics (Calorie Overview)");
+        setExtendedState(ViewMain.MAXIMIZED_BOTH);
         setSize(800,600);
-        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        setLocationRelativeTo(null);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         BarGraphPanel graphPanel = new BarGraphPanel(FitnessData.foodLog, FitnessData.workoutLog);
         add(graphPanel);
 
-        JButton closeButton = new JButton("Close");
-        closeButton.addActionListener(e -> dispose());
-        add(closeButton, BorderLayout.SOUTH);
+        JPanel buttonPanel = new JPanel();
+        buttonPanel.add(returnButton);
+        returnButton.setPreferredSize(new Dimension(80, 30));
+        add(buttonPanel, BorderLayout.SOUTH);
+        returnButton.addActionListener(this);
+        returnButton.setFocusable(false);
 
         setVisible(true);
+    }
+
+    /**
+     * Returns the user to homepage
+     * Disposes of the current window before opening a new one.
+     * @param e the event to be processed, used to determine which button was clicked.
+     */
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        if (e.getSource() == returnButton) {
+            dispose();
+            ViewMain viewMain = new ViewMain();
+        }
     }
 
     public static void main(String[] args) {

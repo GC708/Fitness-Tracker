@@ -1,4 +1,4 @@
-package Views;
+package Models;
 
 // Updated WorkoutEntry class with necessary fields
 public class WorkoutEntry {

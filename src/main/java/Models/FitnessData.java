@@ -1,8 +1,5 @@
 package Models;
 
-import Views.FoodEntry;
-import Views.WorkoutEntry;
-
 import java.util.ArrayList;
 import java.io.*;
 

@@ -1,22 +1,27 @@
 package Views;
 
 import Models.FitnessData;
+import Models.WorkoutEntry;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.*;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-public class ViewWorkout extends JFrame {
+public class ViewWorkout extends JFrame implements ActionListener {
     private DefaultTableModel model;
     private JTable workoutTable;
+    JButton returnButton = new JButton("Return");
 
     public ViewWorkout() {
         setTitle("Fitness Tracker - Workout");
+        setExtendedState(ViewMain.MAXIMIZED_BOTH);
         setSize(800,600);
-        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
 
         model = new DefaultTableModel();
@@ -30,8 +35,14 @@ public class ViewWorkout extends JFrame {
         JPanel buttonPanel = new JPanel();
         JButton addButton = new JButton("Add");
         JButton deleteButton = new JButton("Delete");
+
         buttonPanel.add(addButton);
         buttonPanel.add(deleteButton);
+        buttonPanel.add(returnButton);
+
+        addButton.setFocusable(false);
+        deleteButton.setFocusable(false);
+        returnButton.setFocusable(false);
 
         add(scrollPane, BorderLayout.CENTER);
         add(buttonPanel, BorderLayout.SOUTH);
@@ -57,6 +68,7 @@ public class ViewWorkout extends JFrame {
 
         addButton.addActionListener(e -> openAddWorkoutDialog());
         deleteButton.addActionListener(e -> deleteSelectedWorkout());
+        returnButton.addActionListener(this);
 
         //  current workout to table
         for (WorkoutEntry entry : FitnessData.workoutLog) {
@@ -65,6 +77,19 @@ public class ViewWorkout extends JFrame {
         }
 
         setVisible(true);
+    }
+
+    /**
+     * Returns the user to homepage
+     * Disposes of the current window before opening a new one.
+     * @param e the event to be processed, used to determine which button was clicked.
+     */
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        if (e.getSource() == returnButton) {
+            dispose();
+            ViewMain viewMain = new ViewMain();
+        }
     }
 
     private String getBeginnerWorkout(String muscleGroup) {
@@ -189,5 +214,4 @@ public class ViewWorkout extends JFrame {
     public static void main(String[] args) {
         SwingUtilities.invokeLater(ViewWorkout::new);
     }
-
 }

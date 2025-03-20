@@ -1,4 +1,4 @@
-package Views;
+package Models;
 
 public class FoodEntry {
     String foodItem;
