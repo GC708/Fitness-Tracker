@@ -1,7 +1,7 @@
 package Views;
 
 // Updated WorkoutEntry class with necessary fields
-class WorkoutEntry {
+public class WorkoutEntry {
     String workoutType;
     String date;
     String time;

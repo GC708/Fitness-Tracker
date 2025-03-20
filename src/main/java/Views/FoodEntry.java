@@ -1,6 +1,6 @@
 package Views;
 
-class FoodEntry {
+public class FoodEntry {
     String foodItem;
     String date;
     String time;
