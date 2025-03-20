@@ -12,7 +12,7 @@ public class Main {
         System.out.println("Launching Fitness Tracker...");
         // Load image
         ImageIcon icon = new ImageIcon(Objects.requireNonNull(
-                Main.class.getResource("/images/Generic-App-Icon.png"),
+                Main.class.getResource("/images/generic-app-icon.png"),
                 "Image not found!"
         ));
 
